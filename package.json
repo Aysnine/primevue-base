@@ -11,6 +11,8 @@
     "release": "standard-version"
   },
   "dependencies": {
+    "primeicons": "^4.1.0",
+    "primevue": "^3.3.5",
     "vue": "^3.0.5"
   },
   "devDependencies": {

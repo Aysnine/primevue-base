@@ -2990,6 +2990,16 @@ prettier@^2.2.1:
   resolved "https://registry.yarnpkg.com/prettier/-/prettier-2.2.1.tgz#795a1a78dd52f073da0cd42b21f9c91381923ff5"
   integrity sha512-PqyhM2yCjg/oKkFPtTGUojv7gnZAoG80ttl45O6x2Ug/rMJw4wcc9k6aaf2hibP7BGVCCM33gZoGjyvt9mm16Q==
 
+primeicons@^4.1.0:
+  version "4.1.0"
+  resolved "https://registry.yarnpkg.com/primeicons/-/primeicons-4.1.0.tgz#19eaef8ef5594b0006358ae64e738d03e167c9bb"
+  integrity sha512-uEv2pSPk1zQCfaB2VgnUfnUxxlGryYi+5rbdxmZBBt5v9S/pscIQYS5YDLxsQZ7D9jn5c76+Tx5wX/2J1nK6sA==
+
+primevue@^3.3.5:
+  version "3.4.0"
+  resolved "https://registry.yarnpkg.com/primevue/-/primevue-3.4.0.tgz#567e8068f120d9d98505c6a4437dfb6302ffd5ab"
+  integrity sha512-vgfMQK/Bu2FRayZSnNeYUvJ+v8wsJV1EN792gLGQ3x3T8w1DCmet+3I9OQ07Wm29GjY7Z4GGU0fczBJOLyFNyg==
+
 process-nextick-args@~2.0.0:
   version "2.0.1"
   resolved "https://registry.yarnpkg.com/process-nextick-args/-/process-nextick-args-2.0.1.tgz#7820d9b16120cc55ca9ae7792680ae7dba6d7fe2"
