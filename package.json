@@ -33,7 +33,9 @@
     "standard-version": "^9.2.0",
     "typescript": "^4.1.3",
     "vite": "^2.2.3",
-    "vue-tsc": "^0.0.25"
+    "vite-plugin-windicss": "^0.15.7",
+    "vue-tsc": "^0.0.25",
+    "windicss": "^2.5.14"
   },
   "config": {
     "commitizen": {
