@@ -5,7 +5,7 @@
       <template #subtitle>Student basic information management.</template>
       <template #content>
         <div class="space-x-2 mb-4">
-          <router-link :to="$route + '/create'">
+          <router-link :to="$route.path + '/create'">
             <PrimeButton label="New" icon="pi pi-plus" />
           </router-link>
           <PrimeButton type="button" icon="pi pi-refresh" />
