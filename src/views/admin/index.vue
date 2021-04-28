@@ -2,16 +2,15 @@
   <div class="min-h-screen">
     <header
       :class="$style.primeBorder"
-      class="border-b flex flex-row h-20 ml-72 pl-6 justify-between items-center -sm:pl-2 -lg:ml-0"
+      class="border-b flex flex-row h-20 ml-72 px-6 justify-between items-center -sm:px-4 -lg:ml-0"
     >
-      <ToggleIcon
-        size="24"
-        class="cursor-pointer opacity-80 transition lg:hidden hover:opacity-100"
+      <PrimeButton
+        icon="pi pi-bars"
+        class="p-button-lg p-button-text p-button-plain lg:hidden"
         @click="sidebarActive = true"
       />
       <router-link
-        :class="$style.primeBorder"
-        class="border-b flex space-x-2 h-20 items-center justify-center lg:hidden"
+        class="flex space-x-2 h-20 items-center justify-center lg:hidden"
         to="/"
       >
         <img class="h-10" src="../../assets/logo.png" />
@@ -19,7 +18,18 @@
       >
       <div class="<lg:hidden"></div>
       <div>
-        <!-- TODO -->
+        <PrimeButton
+          v-if="theme === 'saga-green'"
+          icon="pi pi-moon"
+          class="p-button-rounded p-button-text p-button-plain"
+          @click="theme = 'arya-green'"
+        />
+        <PrimeButton
+          v-if="theme === 'arya-green'"
+          icon="pi pi-sun"
+          class="p-button-rounded p-button-text p-button-plain"
+          @click="theme = 'saga-green'"
+        />
       </div>
     </header>
     <aside
@@ -97,14 +107,14 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref } from 'vue'
+import { defineComponent, inject, ref } from 'vue'
 import {
   DegreeHat as StudentIcon,
   UserBusiness as TeacherIcon,
   WaterfallsV as DashboardIcon,
-  Electrocardiogram as NotFoundIcon,
-  HamburgerButton as ToggleIcon
+  Electrocardiogram as NotFoundIcon
 } from '@icon-park/vue-next'
+import PrimeButton from 'primevue/button'
 
 export default defineComponent({
   components: {
@@ -112,12 +122,13 @@ export default defineComponent({
     TeacherIcon,
     DashboardIcon,
     NotFoundIcon,
-    ToggleIcon
+    PrimeButton
   },
   setup() {
     const sidebarActive = ref(false)
 
     return {
+      theme: inject<string>('theme'),
       sidebarActive
     }
   }
@@ -155,7 +166,7 @@ export default defineComponent({
 .content {
   :global {
     section {
-      @apply px-6 py-8 -sm:px-2;
+      @apply px-6 py-8 -sm:px-4;
       background-color: var(--surface-b);
     }
   }
