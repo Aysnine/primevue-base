@@ -17,5 +17,14 @@
   "plugins": [],
   "rules": {
     "prettier/prettier": "warn"
-  }
+  },
+  "overrides": [
+    {
+      "files": ["src/mock/*.*"],
+      "rules": {
+        "@typescript-eslint/explicit-module-boundary-types": "off",
+        "@typescript-eslint/ban-ts-comment": "off"
+      }
+    }
+  ]
 }
