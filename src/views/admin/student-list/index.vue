@@ -4,12 +4,35 @@
       <template #title>Students</template>
       <template #subtitle>Student basic information management.</template>
       <template #content>
-        <div class="space-x-2 mb-4">
-          <router-link :to="$route.path + '/create'">
-            <PrimeButton label="New" icon="pi pi-plus" />
-          </router-link>
-          <PrimeButton type="button" icon="pi pi-refresh" />
-          <PrimeButton type="button" icon="pi pi-search" />
+        <div class="space-y-2 mb-4">
+          <div class="flex space-x-2 justify-between">
+            <div class="flex space-x-2">
+              <router-link :to="$route.path + '/create'">
+                <PrimeButton label="New" icon="pi pi-plus" />
+              </router-link>
+            </div>
+            <div class="flex space-x-2">
+              <PrimeButton
+                type="button"
+                icon="pi pi-refresh"
+                :disabled="!fetch.isReady.value"
+                @click="fetch.execute()"
+              />
+              <PrimeButton
+                v-if="filter.open"
+                type="button"
+                icon="pi pi-filter-slash"
+                @click="filter.open = false"
+              />
+              <PrimeButton
+                v-else
+                type="button"
+                icon="pi pi-filter"
+                @click="filter.open = true"
+              />
+            </div>
+          </div>
+          <ListFilter v-if="filter.open" />
         </div>
 
         <PrimeDataTable
@@ -21,18 +44,21 @@
           responsive-layout="scroll"
         >
           <PrimeColumn field="name" header="Name" style="min-width: 16rem">
-            <template v-if="loading" #body>
-              <PrimeSkeleton />
+            <template #body>
+              <PrimeSkeleton v-if="!fetch.isReady.value" class="min-h-6" />
+              <template v-else>hello</template>
             </template>
           </PrimeColumn>
           <PrimeColumn field="gender" header="Gender" style="min-width: 16rem">
-            <template v-if="loading" #body>
-              <PrimeSkeleton />
+            <template #body>
+              <PrimeSkeleton v-if="!fetch.isReady.value" class="min-h-6" />
+              <template v-else>hello</template>
             </template>
           </PrimeColumn>
           <PrimeColumn field="age" header="Age" style="min-width: 16rem">
-            <template v-if="loading" #body>
-              <PrimeSkeleton />
+            <template #body>
+              <PrimeSkeleton v-if="!fetch.isReady.value" class="min-h-6" />
+              <template v-else>hello</template>
             </template>
           </PrimeColumn>
           <PrimeColumn
@@ -40,13 +66,15 @@
             header="Active"
             style="min-width: 16rem"
           >
-            <template v-if="loading" #body>
-              <PrimeSkeleton />
+            <template #body>
+              <PrimeSkeleton v-if="!fetch.isReady.value" class="min-h-6" />
+              <template v-else>hello</template>
             </template>
           </PrimeColumn>
           <PrimeColumn style="min-width: 10rem">
-            <template v-if="loading" #body>
-              <PrimeSkeleton />
+            <template #body>
+              <PrimeSkeleton v-if="!fetch.isReady.value" class="min-h-6" />
+              <template v-else>hello</template>
             </template>
           </PrimeColumn>
         </PrimeDataTable>
@@ -56,12 +84,15 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, ref } from 'vue'
+import { computed, defineComponent, reactive } from 'vue'
 import PrimeDataTable from 'primevue/datatable'
 import PrimeButton from 'primevue/button'
 import PrimeColumn from 'primevue/column'
 import PrimeCard from 'primevue/card'
 import PrimeSkeleton from 'primevue/skeleton'
+import { useAsyncState } from '@vueuse/core'
+import { getStudents } from '../../../api'
+import ListFilter from './list-filter.vue'
 
 export default defineComponent({
   components: {
@@ -69,47 +100,26 @@ export default defineComponent({
     PrimeButton,
     PrimeColumn,
     PrimeCard,
-    PrimeSkeleton
+    PrimeSkeleton,
+    ListFilter
   },
   setup() {
-    const dataSource = ref([])
-    const loading = ref(true)
+    const filter = reactive({
+      open: false
+    })
+    const fetch = useAsyncState(() => getStudents(), null)
 
     return {
+      filter,
+      fetch,
       dataSource: computed(() =>
-        loading.value && !dataSource.value.length
-          ? Array.from({ length: 10 }).map(() => ({
+        fetch.isReady.value && !fetch.state.value?.data.length
+          ? fetch.state.value?.data
+          : Array.from({ length: 10 }).map(() => ({
               id: String(Math.random())
             }))
-          : dataSource.value
-      ),
-      loading
+      )
     }
   }
 })
 </script>
-
-<style scoped>
-.table-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.product-image {
-  width: 50px;
-  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
-}
-
-.p-dialog .product-image {
-  width: 50px;
-  margin: 0 auto 2rem auto;
-  display: block;
-}
-
-.confirmation-content {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-</style>
