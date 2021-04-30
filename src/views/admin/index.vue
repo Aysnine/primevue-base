@@ -20,13 +20,13 @@
       <div>
         <PrimeButton
           v-if="theme === 'saga-green'"
-          icon="pi pi-moon"
+          icon="pi pi-moon text-xl"
           class="p-button-rounded p-button-text p-button-plain"
           @click="theme = 'arya-green'"
         />
         <PrimeButton
           v-if="theme === 'arya-green'"
-          icon="pi pi-sun"
+          icon="pi pi-sun text-xl"
           class="p-button-rounded p-button-text p-button-plain"
           @click="theme = 'saga-green'"
         />
