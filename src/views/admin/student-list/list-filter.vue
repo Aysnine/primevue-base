@@ -82,15 +82,13 @@
       </div>
       <div :class="'p-field p-col-12 p-md-6 p-lg-4 p-xl-3'">
         <span class="p-float-label">
-          <PrimeCascadeSelect
-            id="cascadeSelect"
-            v-model="selectedCity"
-            :options="cascadeCountries"
-            option-label="cname"
-            option-group-label="name"
-            :option-group-children="['states', 'cities']"
+          <PrimeDropdown
+            id="dropdown"
+            v-model="value8"
+            :options="cities"
+            option-label="name"
           />
-          <label for="multiselect">CascadeSelect</label>
+          <label for="dropdown">Dropdown</label>
         </span>
       </div>
       <div :class="'p-field p-col-12 p-md-6 p-lg-4 p-xl-3'">
@@ -126,11 +124,8 @@ import PrimeChips from 'primevue/chips'
 import PrimeInputMask from 'primevue/inputmask'
 import PrimeInputNumber from 'primevue/inputnumber'
 import PrimeInputText from 'primevue/inputtext'
-import PrimeCascadeSelect from 'primevue/cascadeselect'
 import PrimeDropdown from 'primevue/dropdown'
 import PrimeMultiSelect from 'primevue/multiselect'
-import PrimeTextarea from 'primevue/textarea'
-import PrimePassword from 'primevue/password'
 
 export default defineComponent({
   components: {
@@ -139,11 +134,8 @@ export default defineComponent({
     PrimeInputMask,
     PrimeInputNumber,
     PrimeInputText,
-    PrimeCascadeSelect,
     PrimeDropdown,
-    PrimeMultiSelect,
-    PrimeTextarea,
-    PrimePassword
+    PrimeMultiSelect
   },
   setup() {
     const countries = ref()
