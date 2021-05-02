@@ -20,8 +20,18 @@ interface Pagination {
   pageSize: number
 }
 
+export enum Gender {
+  FEMALE = 'FEMALE',
+  MALE = 'FEMALE'
+}
+
 /* Students */
-export const getStudents = <Response extends Pageable<{ id: string }>>(
+export const getStudents = <
+  Response extends Pageable<{
+    id: string
+    gender: Gender
+  }>
+>(
   params: Pagination
 ): Promise<Response> => http.get<void, Response>('/students', { params })
 /* Teachers */

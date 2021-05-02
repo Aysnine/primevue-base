@@ -1,6 +1,6 @@
 <template>
   <div class="relative">
-    <div :class="[$style.wrapper, { 'opacity-0': computedShow }]">
+    <div :class="{ 'opacity-0': computedShow }">
       <slot />
     </div>
     <div v-if="computedShow" class="inset-0 absolute">
@@ -38,9 +38,3 @@ export default defineComponent({
   }
 })
 </script>
-
-<style module>
-.wrapper:empty {
-  content: '-';
-}
-</style>

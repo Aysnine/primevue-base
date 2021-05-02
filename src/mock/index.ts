@@ -6,6 +6,7 @@ import {
   Response,
   Serializer
 } from 'miragejs'
+import { Gender } from '../api'
 
 export const makeServer = ({ environment = 'development' } = {}) => {
   const server = createServer({
@@ -28,7 +29,9 @@ export const makeServer = ({ environment = 'development' } = {}) => {
 
     factories: {
       student: Factory.extend({
-        name: (i: number) => 'Student ' + i
+        name: (i: number) => 'Student ' + i,
+        gender: Gender.MALE,
+        age: 12
       }),
       teacher: Factory.extend({
         name: (i: number) => 'Teacher ' + i

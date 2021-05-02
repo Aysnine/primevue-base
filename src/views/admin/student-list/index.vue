@@ -68,21 +68,41 @@
           <PrimeColumn field="name" header="Name">
             <template #body="{ data }"
               ><WrapperSkeleton>{{
-                data.name || '-'
+                data.name || EMPTY_TEXT
               }}</WrapperSkeleton></template
             >
           </PrimeColumn>
           <PrimeColumn field="gender" header="Gender">
-            <template #body><WrapperSkeleton>hello</WrapperSkeleton></template>
+            <template #body="{ data }"
+              ><WrapperSkeleton>{{
+                getGenderText(data.gender) ?? EMPTY_TEXT
+              }}</WrapperSkeleton></template
+            >
           </PrimeColumn>
           <PrimeColumn field="age" header="Age">
-            <template #body><WrapperSkeleton>hello</WrapperSkeleton></template>
+            <template #body="{ data }"
+              ><WrapperSkeleton>{{
+                data.age ?? EMPTY_TEXT
+              }}</WrapperSkeleton></template
+            >
           </PrimeColumn>
-          <PrimeColumn field="lastUpdateTime" header="Active">
-            <template #body><WrapperSkeleton>hello</WrapperSkeleton></template>
-          </PrimeColumn>
-          <PrimeColumn>
-            <template #body><WrapperSkeleton>hello</WrapperSkeleton></template>
+          <PrimeColumn style="width: 5rem">
+            <template #body="{ data }">
+              <div class="-my-3 text-right">
+                <PrimeSkeleton
+                  v-if="fetch.pending.value"
+                  size="2.4rem"
+                  class="inline-flex align-middle"
+                />
+                <router-link v-else :to="'students/' + data.id">
+                  <PrimeButton
+                    type="button"
+                    icon="pi pi-arrow-right"
+                    class="p-button-outlined"
+                  />
+                </router-link>
+              </div>
+            </template>
           </PrimeColumn>
         </PrimeDataTable>
       </template>
@@ -96,11 +116,14 @@ import PrimeDataTable from 'primevue/datatable'
 import PrimeButton from 'primevue/button'
 import PrimeColumn from 'primevue/column'
 import PrimeCard from 'primevue/card'
-import { getStudents, useAsyncApi } from '../../../api'
+import { Gender, getStudents, useAsyncApi } from '../../../api'
 import ListFilter from './list-filter.vue'
+import PrimeSkeleton from 'primevue/skeleton'
 import WrapperSkeleton, {
   INJECT_SHOW
 } from '../../../components/WrapperSkeleton.vue'
+import { EMPTY_TEXT, GENDER_TEXT } from '../../../constants'
+import { useRoute, useRouter } from 'vue-router'
 
 export default defineComponent({
   components: {
@@ -109,11 +132,21 @@ export default defineComponent({
     PrimeColumn,
     PrimeCard,
     ListFilter,
+    PrimeSkeleton,
     WrapperSkeleton
   },
   setup() {
+    const route = useRoute()
+    const router = useRouter()
     const filter = ref(false)
-    const firstRecordIndex = ref(0)
+
+    const firstRecordIndex = ref(Number(route.query.firstRecordIndex) || 0)
+    watch(firstRecordIndex, (val) =>
+      router.replace({
+        path: route.path,
+        query: { ...route.query, firstRecordIndex: val }
+      })
+    )
     const fetchParams = reactive({ pageIndex: 0, pageSize: 10 })
     const fetch = useAsyncApi(() => getStudents(fetchParams), {
       data: Array.from({ length: 10 }).map(() => ({
@@ -134,7 +167,13 @@ export default defineComponent({
       fetch,
       filter,
       firstRecordIndex,
-      onPage
+      onPage,
+      EMPTY_TEXT
+    }
+  },
+  methods: {
+    getGenderText(gender: Gender) {
+      return GENDER_TEXT[gender]
     }
   }
 })
