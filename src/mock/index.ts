@@ -1,4 +1,11 @@
-import { belongsTo, createServer, Factory, Model, Serializer } from 'miragejs'
+import {
+  belongsTo,
+  createServer,
+  Factory,
+  Model,
+  Response,
+  Serializer
+} from 'miragejs'
 
 export const makeServer = ({ environment = 'development' } = {}) => {
   const server = createServer({
@@ -30,14 +37,18 @@ export const makeServer = ({ environment = 'development' } = {}) => {
 
     seeds(server) {
       server.createList('teacher', 5).forEach((teacher) => {
-        server.createList('student', 1, { adminTeacher: teacher })
+        server.createList('student', 5, { adminTeacher: teacher })
       })
     },
 
     routes() {
       this.namespace = 'api'
 
-      this.get('/students', function (schema) {
+      this.get('/students', function (schema, req) {
+        if (req.queryParams.pageIndex == '1') {
+          return new Response(400)
+        }
+
         return {
           total: 100,
           // @ts-ignore

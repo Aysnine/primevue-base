@@ -15,13 +15,20 @@ interface Pageable<Record> {
   total: number
 }
 
+interface Pagination {
+  pageIndex: number
+  pageSize: number
+}
+
 /* Students */
-export const getStudents = <
-  Response extends Pageable<{ id: string }>
->(): Promise<Response> => http.get<void, Response>('/students')
+export const getStudents = <Response extends Pageable<{ id: string }>>(
+  params: Pagination
+): Promise<Response> => http.get<void, Response>('/students', { params })
 /* Teachers */
 export const getTeachers = <
   Response extends Pageable<{ id: string }>
 >(): Promise<Response> => http.get<void, Response>('/teachers')
 
 export default http
+export * from './errors'
+export * from './hooks'
