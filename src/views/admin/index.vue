@@ -66,13 +66,25 @@
         <div :class="$style.menuCategory">People</div>
         <div :class="$style.menuItems">
           <router-link
-            :class="$style.menuItem"
-            :active-class="$style.menuItemActive"
+            v-slot="{ href, navigate, isActive }"
             to="/admin/students"
+            custom
           >
-            <StudentIcon :class="$style.menuItemIcon" />
-            <span>Students</span></router-link
-          >
+            <a
+              :href="href"
+              :class="[
+                $style.menuItem,
+                {
+                  [$style.menuItemActive]:
+                    isActive || $route.path.startsWith('/admin/students/')
+                }
+              ]"
+              @click="navigate"
+            >
+              <StudentIcon :class="$style.menuItemIcon" />
+              <span>Students</span></a
+            >
+          </router-link>
           <router-link
             :class="$style.menuItem"
             :active-class="$style.menuItemActive"
