@@ -147,7 +147,10 @@ export default defineComponent({
         query: { ...route.query, firstRecordIndex: val }
       })
     )
-    const fetchParams = reactive({ pageIndex: 0, pageSize: 10 })
+    const fetchParams = reactive({
+      pageIndex: ~~(firstRecordIndex.value / 10),
+      pageSize: 10
+    })
     const fetch = useAsyncApi(() => getStudents(fetchParams), {
       data: Array.from({ length: 10 }).map(() => ({
         id: String(Math.random())
