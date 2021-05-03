@@ -32,18 +32,19 @@
               />
             </div>
           </div>
-          <ListFilter v-if="filter" />
+          <ListFilter v-if="filter" v-model="fetchParams" />
         </div>
 
         <PrimeDataTable
           v-model:first="firstRecordIndex"
+          :rows="pageSize"
           :value="fetch.error.value ? [] : fetch.data.value.data"
           data-key="id"
           paginator
           lazy
-          :rows="10"
           :total-records="fetch.data.value.total"
           responsive-layout="scroll"
+          :rows-per-page-options="[10, 20, 50]"
           @page="onPage"
         >
           <template #empty>
@@ -111,7 +112,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, provide, reactive, ref, watch } from 'vue'
+import { computed, defineComponent, provide, reactive, ref, watch } from 'vue'
 import PrimeDataTable from 'primevue/datatable'
 import PrimeButton from 'primevue/button'
 import PrimeColumn from 'primevue/column'
@@ -124,6 +125,7 @@ import WrapperSkeleton, {
 } from '../../../components/WrapperSkeleton.vue'
 import { EMPTY_TEXT, GENDER_TEXT } from '../../../constants'
 import { useRoute, useRouter } from 'vue-router'
+import { useThrottleFn } from '@vueuse/core'
 
 export default defineComponent({
   components: {
@@ -138,39 +140,83 @@ export default defineComponent({
   setup() {
     const route = useRoute()
     const router = useRouter()
-    const filter = ref(false)
 
-    const firstRecordIndex = ref(Number(route.query.firstRecordIndex) || 0)
-    watch(firstRecordIndex, (val) =>
-      router.replace({
-        path: route.path,
-        query: { ...route.query, firstRecordIndex: val }
-      })
+    const pageIndex = computed({
+      get: () => Number(route.query.pageIndex) || 0,
+      set: (val: number) => {
+        console.log(route.query)
+
+        router.push({
+          path: route.path,
+          query: { ...route.query, pageIndex: val }
+        })
+      }
+    })
+    const pageSize = computed({
+      get: () => Number(route.query.pageSize) || 10,
+      set: (val: number) =>
+        router.push({
+          path: route.path,
+          query: { ...route.query, pageSize: val }
+        })
+    })
+    const firstRecordIndex = computed({
+      get: () => ~~(pageIndex.value * pageSize.value),
+      set: (val: number) => (pageIndex.value = ~~(val / pageSize.value))
+    })
+
+    const filterInitialParams = () => ({
+      name: undefined,
+      gender: undefined,
+      maxAge: undefined,
+      minAge: undefined
+    })
+    const filterParams = reactive(filterInitialParams())
+    const filterRef = ref(false)
+    const filter = computed({
+      get: (): boolean => filterRef.value,
+      set: (val: boolean) => {
+        filterRef.value = val
+        if (!val) {
+          Object.assign(filterParams, filterInitialParams())
+        }
+      }
+    })
+
+    watch(
+      [pageIndex, pageSize, filterParams, firstRecordIndex],
+      useThrottleFn(() => fetch.execute(), 800)
     )
-    const fetchParams = reactive({
-      pageIndex: ~~(firstRecordIndex.value / 10),
-      pageSize: 10
-    })
-    const fetch = useAsyncApi(() => getStudents(fetchParams), {
-      data: Array.from({ length: 10 }).map(() => ({
-        id: String(Math.random())
-      })),
-      total: 0
-    })
-    watch(fetchParams, () => fetch.execute())
+
+    const fetch = useAsyncApi(
+      () =>
+        getStudents({
+          pageIndex: pageIndex.value,
+          pageSize: pageSize.value,
+          ...filterParams
+        }),
+      {
+        data: Array.from({ length: 10 }).map(() => ({
+          id: String(Math.random())
+        })),
+        total: 0
+      }
+    )
     provide(INJECT_SHOW, fetch.pending)
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const onPage = (event: any): any => {
-      fetchParams.pageIndex = event.page
-      fetchParams.pageSize = event.pageCount
+      pageIndex.value = event.page
+      pageSize.value = event.rows
     }
 
     return {
       fetch,
       filter,
+      pageSize,
       firstRecordIndex,
       onPage,
+      fetchParams: filterParams,
       EMPTY_TEXT
     }
   },

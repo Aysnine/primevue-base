@@ -22,7 +22,7 @@ interface Pagination {
 
 export enum Gender {
   FEMALE = 'FEMALE',
-  MALE = 'FEMALE'
+  MALE = 'MALE'
 }
 
 /* Students */
