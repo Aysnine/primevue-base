@@ -1,5 +1,5 @@
 <template>
-  <section>
+  <section class="one-full">
     <PrimeCard>
       <template #title>Dashboard</template>
       <template #content>
