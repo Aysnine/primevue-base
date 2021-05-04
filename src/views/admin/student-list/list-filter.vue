@@ -80,10 +80,11 @@ export default defineComponent({
   },
   computed: {
     params: {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       get(): any {
         return this.modelValue
       },
-      set(val: any) {
+      set(val: unknown) {
         this.$emit('update:params', val)
       }
     }
