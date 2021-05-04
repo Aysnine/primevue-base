@@ -10,6 +10,6 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-.p-multiselect.p-component.p-inputwrapper {
+.p-multiselect.p-component.p-inputwrapper, .p-paginator {
   line-height: normal;
 }
