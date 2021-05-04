@@ -124,8 +124,7 @@ import WrapperSkeleton, {
   INJECT_SHOW
 } from '../../../components/WrapperSkeleton.vue'
 import { EMPTY_TEXT, GENDER_TEXT } from '../../../constants'
-import { useRoute, useRouter } from 'vue-router'
-import { useThrottleFn } from '@vueuse/core'
+import { useThrottleFn, useUrlSearchParams } from '@vueuse/core'
 
 export default defineComponent({
   components: {
@@ -138,27 +137,15 @@ export default defineComponent({
     WrapperSkeleton
   },
   setup() {
-    const route = useRoute()
-    const router = useRouter()
+    const searchParams = useUrlSearchParams()
 
     const pageIndex = computed({
-      get: () => Number(route.query.pageIndex) || 0,
-      set: (val: number) => {
-        console.log(route.query)
-
-        router.push({
-          path: route.path,
-          query: { ...route.query, pageIndex: val }
-        })
-      }
+      get: () => Number(searchParams.pageIndex) || 0,
+      set: (val: number) => (searchParams.pageIndex = String(val))
     })
     const pageSize = computed({
-      get: () => Number(route.query.pageSize) || 10,
-      set: (val: number) =>
-        router.push({
-          path: route.path,
-          query: { ...route.query, pageSize: val }
-        })
+      get: () => Number(searchParams.pageSize) || 10,
+      set: (val: number) => (searchParams.pageSize = String(val))
     })
     const firstRecordIndex = computed({
       get: () => ~~(pageIndex.value * pageSize.value),
@@ -183,8 +170,9 @@ export default defineComponent({
       }
     })
 
+    watch(filterParams, () => (pageIndex.value = 0))
     watch(
-      [pageIndex, pageSize, filterParams, firstRecordIndex],
+      [pageIndex, pageSize, filterParams],
       useThrottleFn(() => fetch.execute(), 800)
     )
 
