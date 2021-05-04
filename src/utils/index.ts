@@ -9,3 +9,6 @@ export const changePrimeTheme = (targetTheme: string): void => {
     }
   })
 }
+
+export const appendPath = (path: string, pathToAppend: string): string =>
+  pathToAppend ? path + (path.endsWith('/') ? '' : '/') + pathToAppend : path

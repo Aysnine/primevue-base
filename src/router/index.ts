@@ -19,7 +19,24 @@ const routes = [
       },
       {
         path: 'students/create',
-        component: () => import('../views/admin/student-create/index.vue')
+        component: () => import('../views/admin/student-create/index.vue'),
+        children: [
+          {
+            path: '',
+            component: () =>
+              import('../views/admin/student-create/step-personal.vue')
+          },
+          {
+            path: 'education',
+            component: () =>
+              import('../views/admin/student-create/step-education.vue')
+          },
+          {
+            path: 'confirmation',
+            component: () =>
+              import('../views/admin/student-create/step-confirmation.vue')
+          },
+        ]
       },
       {
         path: 'students/:id',
