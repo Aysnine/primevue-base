@@ -181,6 +181,9 @@ export default defineComponent({
       @apply px-6 py-8 -sm:px-4;
       background-color: var(--surface-b);
     }
+    section:global(.one-full) {
+      min-height: calc(100vh - 5rem);
+    }
   }
 }
 </style>

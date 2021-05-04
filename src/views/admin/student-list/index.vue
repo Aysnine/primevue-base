@@ -1,5 +1,5 @@
 <template>
-  <section>
+  <section class="one-full">
     <PrimeCard>
       <template #title>Students</template>
       <template #subtitle>Student basic information management.</template>
