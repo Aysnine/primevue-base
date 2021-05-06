@@ -32,12 +32,12 @@
               />
             </div>
           </div>
-          <ListFilter v-if="filter" v-model="fetchParams" />
+          <ListFilter v-if="filter" v-model="filterParams" />
         </div>
 
         <PrimeDataTable
           v-model:first="firstRecordIndex"
-          :rows="pageSize"
+          :rows="paginationParams.pageSize"
           :value="fetch.error.value ? [] : fetch.data.value.data"
           data-key="id"
           paginator
@@ -124,7 +124,8 @@ import WrapperSkeleton, {
   INJECT_SHOW
 } from '../../../components/WrapperSkeleton.vue'
 import { EMPTY_TEXT, GENDER_TEXT } from '../../../constants'
-import { useThrottleFn, useUrlSearchParams } from '@vueuse/core'
+import { useThrottleFn } from '@vueuse/core'
+import { useRoute, useRouter } from 'vue-router'
 
 export default defineComponent({
   components: {
@@ -137,52 +138,65 @@ export default defineComponent({
     WrapperSkeleton
   },
   setup() {
-    const searchParams = useUrlSearchParams()
+    const router = useRouter()
+    const route = useRoute()
 
-    const pageIndex = computed({
-      get: () => Number(searchParams.pageIndex) || 0,
-      set: (val: number) => (searchParams.pageIndex = String(val))
-    })
-    const pageSize = computed({
-      get: () => Number(searchParams.pageSize) || 10,
-      set: (val: number) => (searchParams.pageSize = String(val))
-    })
-    const firstRecordIndex = computed({
-      get: () => ~~(pageIndex.value * pageSize.value),
-      set: (val: number) => (pageIndex.value = ~~(val / pageSize.value))
+    const filterParams = reactive({
+      name: String(route.query.name || '') || undefined,
+      gender: String(route.query.gender || '')
+        .split(',')
+        .filter(Boolean),
+      maxAge: Number(route.query.maxAge) || undefined,
+      minAge: Number(route.query.minAge) || undefined
     })
 
-    const filterInitialParams = () => ({
-      name: undefined,
-      gender: undefined,
-      maxAge: undefined,
-      minAge: undefined
+    const paginationParams = reactive({
+      pageIndex: Number(route.query.pageIndex) || 0,
+      pageSize: Number(route.query.pageSize) || 10
     })
-    const filterParams = reactive(filterInitialParams())
-    const filterRef = ref(false)
-    const filter = computed({
-      get: (): boolean => filterRef.value,
-      set: (val: boolean) => {
-        filterRef.value = val
-        if (!val) {
-          Object.assign(filterParams, filterInitialParams())
-        }
+
+    watch(
+      filterParams,
+      useThrottleFn(() => {
+        paginationParams.pageIndex = 0
+        fetchTimestamp.value++
+      }, 1000)
+    )
+
+    watch(
+      () => paginationParams.pageSize,
+      () => (paginationParams.pageIndex = 0)
+    )
+
+    const filter = ref(false)
+    watch(filter, (val) => {
+      if (!val) {
+        Object.assign(
+          filterParams,
+          Object.fromEntries(Object.keys(filterParams).map((i) => [i]))
+        )
       }
     })
 
-    watch(filterParams, () => (pageIndex.value = 0))
-    watch(
-      [pageIndex, pageSize, filterParams],
-      useThrottleFn(() => fetch.execute(), 800)
-    )
-
+    const fetchTimestamp = ref(0)
     const fetch = useAsyncApi(
-      () =>
-        getStudents({
-          pageIndex: pageIndex.value,
-          pageSize: pageSize.value,
-          ...filterParams
-        }),
+      () => {
+        const params = {
+          ...filterParams,
+          ...paginationParams
+        }
+
+        router.replace({
+          query: {
+            ...params,
+            pageIndex: params.pageIndex === 0 ? undefined : params.pageIndex,
+            pageSize: params.pageSize === 10 ? undefined : params.pageSize,
+            gender: params.gender.join(',') || undefined
+          }
+        })
+
+        return getStudents(params)
+      },
       {
         data: Array.from({ length: 10 }).map(() => ({
           id: String(Math.random())
@@ -192,19 +206,25 @@ export default defineComponent({
     )
     provide(INJECT_SHOW, fetch.pending)
 
+    const firstRecordIndex = computed({
+      get: () => ~~(paginationParams.pageIndex * paginationParams.pageSize),
+      set: (val: number) =>
+        (paginationParams.pageIndex = ~~(val / paginationParams.pageSize))
+    })
+
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const onPage = (event: any): any => {
-      pageIndex.value = event.page
-      pageSize.value = event.rows
+      paginationParams.pageIndex = event.page
+      paginationParams.pageSize = event.rows
     }
 
     return {
       fetch,
       filter,
-      pageSize,
+      filterParams,
+      paginationParams,
       firstRecordIndex,
       onPage,
-      fetchParams: filterParams,
       EMPTY_TEXT
     }
   },
