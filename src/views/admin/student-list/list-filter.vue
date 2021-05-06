@@ -17,6 +17,7 @@
             v-model="params.gender"
             :options="genderOptions"
             option-label="name"
+            option-value="code"
           />
           <label>Gender</label>
         </span>

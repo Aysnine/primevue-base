@@ -1,3 +1,5 @@
+import { LocationQueryRaw } from 'vue-router'
+
 export const changePrimeTheme = (targetTheme: string): void => {
   const links = document.querySelectorAll('link[data-prime-theme]')
   Array.from(links).forEach((link) => {
@@ -12,3 +14,11 @@ export const changePrimeTheme = (targetTheme: string): void => {
 
 export const appendPath = (path: string, pathToAppend: string): string =>
   pathToAppend ? path + (path.endsWith('/') ? '' : '/') + pathToAppend : path
+
+export const omitUrlSearchParams = (
+  params: LocationQueryRaw
+): LocationQueryRaw => {
+  return Object.fromEntries(
+    Object.entries(params).filter(([, val]) => val !== undefined)
+  )
+}

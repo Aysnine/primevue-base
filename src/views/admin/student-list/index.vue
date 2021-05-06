@@ -124,8 +124,9 @@ import WrapperSkeleton, {
   INJECT_SHOW
 } from '../../../components/WrapperSkeleton.vue'
 import { EMPTY_TEXT, GENDER_TEXT } from '../../../constants'
-import { useThrottleFn } from '@vueuse/core'
+import { useDebounceFn, useThrottleFn } from '@vueuse/core'
 import { useRoute, useRouter } from 'vue-router'
+import { omitUrlSearchParams } from '../../../utils'
 
 export default defineComponent({
   components: {
@@ -179,6 +180,11 @@ export default defineComponent({
     })
 
     const fetchTimestamp = ref(0)
+    watch(
+      [paginationParams, fetchTimestamp],
+      useDebounceFn(() => fetch.execute(), 100)
+    )
+
     const fetch = useAsyncApi(
       () => {
         const params = {
@@ -187,18 +193,18 @@ export default defineComponent({
         }
 
         router.replace({
-          query: {
+          query: omitUrlSearchParams({
             ...params,
             pageIndex: params.pageIndex === 0 ? undefined : params.pageIndex,
             pageSize: params.pageSize === 10 ? undefined : params.pageSize,
-            gender: params.gender.join(',') || undefined
-          }
+            gender: (params.gender || []).join(',') || undefined
+          })
         })
 
         return getStudents(params)
       },
       {
-        data: Array.from({ length: 10 }).map(() => ({
+        data: Array.from({ length: paginationParams.pageSize }).map(() => ({
           id: String(Math.random())
         })),
         total: 0
