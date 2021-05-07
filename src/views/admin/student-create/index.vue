@@ -10,8 +10,8 @@
       <router-view
         v-slot="{ Component }"
         :form-data="formObject"
-        @prevPage="prevPage($event)"
-        @nextPage="nextPage($event)"
+        @prevStep="prevStep($event)"
+        @nextStep="nextStep($event)"
         @complete="complete"
       >
         <keep-alive>
@@ -49,23 +49,22 @@ export default defineComponent({
       }
     ])
 
-    const formObject = ref({})
+    const formObject = ref<any>({})
 
-    const nextPage = (event) => {
+    const nextStep = (event: any) => {
       for (let field in event.formData) {
         formObject.value[field] = event.formData[field]
       }
-
-      router.push(steps.value[event.pageIndex + 1].to)
+      router.push(steps.value[event.stepIndex + 1].to)
     }
-    const prevPage = (event) => {
-      router.push(steps.value[event.pageIndex - 1].to)
+    const prevStep = (event: any) => {
+      router.push(steps.value[event.stepIndex - 1].to)
     }
     const complete = () => {
       console.log('yes', formObject.value)
     }
 
-    return { steps, formObject, nextPage, prevPage, complete }
+    return { steps, formObject, nextStep, prevStep, complete }
   }
 })
 </script>
