@@ -559,6 +559,11 @@
     "@typescript-eslint/types" "4.22.1"
     eslint-visitor-keys "^2.0.0"
 
+"@vee-validate/zod@^4.1.20":
+  version "4.1.20"
+  resolved "https://registry.yarnpkg.com/@vee-validate/zod/-/zod-4.1.20.tgz#dc0d53a2b86f8bee74f771de3fccdd626fd4ffc6"
+  integrity sha512-+uSWaqNcO/W9EFzYNyLirm4WhyEBztEFf87eJJLI+E5orx+nUSLP2ERytRWIbUHgitL/H3jLmL8RNsX6uDD97A==
+
 "@vitejs/plugin-vue@^1.2.2":
   version "1.2.2"
   resolved "https://registry.yarnpkg.com/@vitejs/plugin-vue/-/plugin-vue-1.2.2.tgz#b0038fc11b9099f4cd01fcbf0ee419adda417b52"
@@ -5556,6 +5561,11 @@ validate-npm-package-license@^3.0.1:
   dependencies:
     spdx-correct "^3.0.0"
     spdx-expression-parse "^3.0.0"
+
+vee-validate@^4.3.5:
+  version "4.3.5"
+  resolved "https://registry.yarnpkg.com/vee-validate/-/vee-validate-4.3.5.tgz#c0336533d997f505801f75d174600b33c4d17f8f"
+  integrity sha512-C6XUhb1CTUeWvqshH607t5GpfmK5rfxwONe4TxVtUpvCdWf3D4f0eMpPJOWohXclXcp/dRIp3iQ9fHH3EnA7Mg==
 
 vfile-message@*:
   version "3.0.1"
