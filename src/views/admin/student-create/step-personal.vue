@@ -59,7 +59,7 @@ export default defineComponent({
     PrimeDropdown
   },
   emits: ['nextStep'],
-  setup() {
+  setup(_, { emit }) {
     const { handleSubmit, errors } = useForm({
       validationSchema: toFormValidator(
         zod.object({
@@ -74,7 +74,7 @@ export default defineComponent({
     const submit = handleSubmit((values) => {
       console.log(values)
 
-      this.$emit('nextStep', { stepIndex, formData: { xxx: 1 } })
+      emit('nextStep', { stepIndex, formData: { xxx: 1 } })
     })
 
     const genderOptions = ref(
