@@ -5599,10 +5599,10 @@ validate-npm-package-license@^3.0.1:
     spdx-correct "^3.0.0"
     spdx-expression-parse "^3.0.0"
 
-vee-validate@^4.3.5:
-  version "4.3.5"
-  resolved "https://registry.yarnpkg.com/vee-validate/-/vee-validate-4.3.5.tgz#c0336533d997f505801f75d174600b33c4d17f8f"
-  integrity sha512-C6XUhb1CTUeWvqshH607t5GpfmK5rfxwONe4TxVtUpvCdWf3D4f0eMpPJOWohXclXcp/dRIp3iQ9fHH3EnA7Mg==
+vee-validate@^4.3.6:
+  version "4.3.6"
+  resolved "https://registry.yarnpkg.com/vee-validate/-/vee-validate-4.3.6.tgz#d835bd7d4b19452c21a80973239d0d8f82fa4a10"
+  integrity sha512-2UpbuMu7UE0L7l73VEeoBoxlyg+QoR4DR6BNOTDgIi/ENZvkVap6tu8r3Wry8s2OL3XTM6O5ZMNx2CLscWn5kw==
 
 vfile-message@*:
   version "3.0.1"
