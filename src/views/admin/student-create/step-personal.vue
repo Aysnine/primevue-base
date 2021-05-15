@@ -1,27 +1,42 @@
 <template>
-  <form autocomplete="off" @submit="submit">
+  <VeeForm
+    autocomplete="off"
+    :validation-schema="validationSchema"
+    @submit="onSubmit"
+  >
     <PrimeCard>
       <template #subtitle>Personal Information</template>
       <template #content>
         <div class="m-auto p-fluid max-w-100">
-          <div class="p-field">
-            <label>Name</label>
-            <PrimeInputText
-              v-model.trim="name"
-              type="text"
-              :class="{ 'p-invalid': errors.name }"
-            />
-            <span v-if="errors.name" class="p-error">{{ errors.name }}</span>
-          </div>
-          <div class="p-field">
-            <label>Gender</label>
-            <PrimeDropdown
-              v-model="gender.value.value"
-              :options="genderOptions"
-              option-label="name"
-              option-value="code"
-            />
-          </div>
+          <VeeField v-slot="{ field, errorMessage }" name="name">
+            <div class="p-field">
+              <label>Name</label>
+              <PrimeInputText
+                v-bind="field"
+                :class="{ 'p-invalid': errorMessage }"
+              />
+              <span v-if="errorMessage" class="p-error">{{
+                errorMessage
+              }}</span>
+            </div>
+          </VeeField>
+          <VeeField v-slot="{ field, errorMessage }" name="gender">
+            <div class="p-field">
+              <label>Gender</label>
+              <PrimeDropdown
+                :class="{ 'p-invalid': errorMessage }"
+                :options="genderOptions"
+                option-label="name"
+                option-value="code"
+                :model-value="field.value"
+                @input="field.onInput.forEach((fn) => fn($event.value))"
+                @change="field.onChange.forEach((fn) => fn($event.value))"
+              />
+              <span v-if="errorMessage" class="p-error">{{
+                errorMessage
+              }}</span>
+            </div>
+          </VeeField>
         </div>
       </template>
       <template #footer>
@@ -35,7 +50,7 @@
         </div>
       </template>
     </PrimeCard>
-  </form>
+  </VeeForm>
 </template>
 
 <script lang="ts">
@@ -45,7 +60,7 @@ import PrimeButton from 'primevue/button'
 import PrimeInputText from 'primevue/inputtext'
 import PrimeDropdown from 'primevue/dropdown'
 import { GENDER_TEXT } from '../../../constants'
-import { useField, useForm } from 'vee-validate'
+import { Form as VeeForm, Field as VeeField } from 'vee-validate'
 import { toFormValidator } from '@vee-validate/zod'
 import * as zod from 'zod'
 
@@ -56,32 +71,30 @@ export default defineComponent({
     PrimeCard,
     PrimeButton,
     PrimeInputText,
-    PrimeDropdown
+    PrimeDropdown,
+    VeeForm,
+    VeeField
   },
   emits: ['nextStep'],
   setup(_, { emit }) {
-    const { handleSubmit, errors } = useForm({
-      validationSchema: toFormValidator(
-        zod.object({
-          name: zod.string().nonempty('This is required')
-        })
-      )
-    })
+    const validationSchema = toFormValidator(
+      zod.object({
+        name: zod.string().nonempty('This is required'),
+        gender: zod.string().nonempty('This is required')
+      })
+    )
 
-    const { value: name } = useField('name', undefined, { initialValue: '' })
-    const gender = useField('name', undefined, { initialValue: '' })
-
-    const submit = handleSubmit((values) => {
+    const onSubmit = (values: any) => {
       console.log(values)
 
       emit('nextStep', { stepIndex, formData: { xxx: 1 } })
-    })
+    }
 
     const genderOptions = ref(
       Object.entries(GENDER_TEXT).map(([code, name]) => ({ code, name }))
     )
 
-    return { name, gender, errors, submit, genderOptions }
+    return { genderOptions, validationSchema, onSubmit }
   }
 })
 </script>
