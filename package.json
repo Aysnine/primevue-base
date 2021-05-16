@@ -50,7 +50,7 @@
     "vite": "^2.3.2",
     "vite-plugin-windicss": "^0.15.10",
     "vue-tsc": "^0.1.2",
-    "windicss": "^3.0.5"
+    "windicss": "^3.0.6"
   },
   "config": {
     "commitizen": {
