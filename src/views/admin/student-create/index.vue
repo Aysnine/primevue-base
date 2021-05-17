@@ -26,13 +26,14 @@
 import { defineComponent, ref } from 'vue'
 import PrimeSteps from 'primevue/steps'
 import PrimeCard from 'primevue/card'
-import { useRouter } from 'vue-router'
+import { useRouter, useRoute } from 'vue-router'
 import { appendPath } from '../../../utils'
 
 export default defineComponent({
   components: { PrimeSteps, PrimeCard },
   setup() {
     const router = useRouter()
+    const route = useRoute()
     const [{ path }] = router.currentRoute.value.matched.slice(-2, -1)
     const steps = ref([
       {
@@ -49,22 +50,28 @@ export default defineComponent({
       }
     ])
 
-    const formObject = ref<any>({})
+    // auto back to first
+    const isFirstStep = path === route.path
+    if (!isFirstStep) {
+      router.replace(path)
+    }
+
+    const formValues = ref<{}>({})
 
     const nextStep = (event: any) => {
-      for (let field in event.formData) {
-        formObject.value[field] = event.formData[field]
+      for (let field in event.formValues) {
+        formValues.value[field] = event.formValues[field]
       }
-      router.push(steps.value[event.stepIndex + 1].to)
+      router.replace(steps.value[event.stepIndex + 1].to)
     }
     const prevStep = (event: any) => {
-      router.push(steps.value[event.stepIndex - 1].to)
+      router.replace(steps.value[event.stepIndex - 1].to)
     }
     const complete = () => {
-      console.log('yes', formObject.value)
+      console.log('yes', formValues.value)
     }
 
-    return { steps, formObject, nextStep, prevStep, complete }
+    return { steps, formObject: formValues, nextStep, prevStep, complete }
   }
 })
 </script>

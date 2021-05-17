@@ -13,3 +13,10 @@ body {
 .p-multiselect.p-component.p-inputwrapper, .p-paginator, .p-dropdown {
   line-height: normal;
 }
+
+.form-required-mark {
+  &::after {
+    @apply text-red-500;
+    content: ' *';
+  }
+}

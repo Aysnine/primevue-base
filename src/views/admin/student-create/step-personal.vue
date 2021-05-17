@@ -2,7 +2,7 @@
   <VeeForm
     autocomplete="off"
     :validation-schema="validationSchema"
-    @submit="onSubmit"
+    @submit="handleNext"
   >
     <PrimeCard>
       <template #subtitle>Personal Information</template>
@@ -10,9 +10,10 @@
         <div class="m-auto p-fluid max-w-100">
           <VeeField v-slot="{ field, errorMessage }" name="name">
             <div class="p-field">
-              <label>Name</label>
+              <label class="form-required-mark">Name</label>
               <PrimeInputText
                 v-bind="field"
+                :maxlength="100"
                 :class="{ 'p-invalid': errorMessage }"
               />
               <span v-if="errorMessage" class="p-error">{{
@@ -22,7 +23,24 @@
           </VeeField>
           <VeeField v-slot="{ field, errorMessage }" name="gender">
             <div class="p-field">
-              <label>Gender</label>
+              <label class="form-required-mark">Gender</label>
+              <PrimeDropdown
+                :class="{ 'p-invalid': errorMessage }"
+                :options="genderOptions"
+                option-label="name"
+                option-value="code"
+                :model-value="field.value"
+                @input="field.onInput.forEach((fn) => fn($event.value))"
+                @change="field.onChange.forEach((fn) => fn($event.value))"
+              />
+              <span v-if="errorMessage" class="p-error">{{
+                errorMessage
+              }}</span>
+            </div>
+          </VeeField>
+          <VeeField v-slot="{ field, errorMessage }" name="gender">
+            <div class="p-field">
+              <label class="form-required-mark">Gender</label>
               <PrimeDropdown
                 :class="{ 'p-invalid': errorMessage }"
                 :options="genderOptions"
@@ -84,17 +102,15 @@ export default defineComponent({
       })
     )
 
-    const onSubmit = (values: any) => {
-      console.log(values)
-
-      emit('nextStep', { stepIndex, formData: { xxx: 1 } })
+    const handleNext = (values: any) => {
+      emit('nextStep', { stepIndex, formValues: { ...values } })
     }
 
     const genderOptions = ref(
       Object.entries(GENDER_TEXT).map(([code, name]) => ({ code, name }))
     )
 
-    return { genderOptions, validationSchema, onSubmit }
+    return { genderOptions, validationSchema, handleNext }
   }
 })
 </script>

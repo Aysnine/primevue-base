@@ -15,7 +15,6 @@
           type="button"
           label="Confirm"
           icon="pi pi-check"
-          icon-pos="right"
           @click="handleComplete"
         />
       </div>
