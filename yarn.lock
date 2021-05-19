@@ -5274,10 +5274,10 @@ windicss@^2.5.14:
   resolved "https://registry.yarnpkg.com/windicss/-/windicss-2.5.14.tgz#41236ccc2517c0947e1adb69e0d5e8aa9bed9c1e"
   integrity sha512-8Lm7U1M5AzJPbiaVSVz7qWdETRzlkv//5LBMICBBAojos1jo09lUGhNZ5rBzHeldB9JmqYMDOGgrrXHExu0EAg==
 
-windicss@^3.0.6:
-  version "3.0.6"
-  resolved "https://registry.yarnpkg.com/windicss/-/windicss-3.0.6.tgz#882ae9930ff76b7bc2ecb6c54050a510c92ee312"
-  integrity sha512-XO/w6VBnCdniPR1vBNlNZ9BZC2uXV7dDVUQaw/ICk0LArj3xYz6WrtePTeqjCU4085SmracEqxAA+fFoKOxKsw==
+windicss@^3.0.8:
+  version "3.0.8"
+  resolved "https://registry.yarnpkg.com/windicss/-/windicss-3.0.8.tgz#6c1f8e283108b16331a56076d83a89c655ccf9de"
+  integrity sha512-Bae9xH1HIggOnxV0OtMs3qK8s8QT4fgLZvFxZMUqgvMdAPk6nohZIUCFIiRN0+9CrAj2XrCLvNUf67rU7dGGcg==
 
 with@^7.0.0:
   version "7.0.2"
