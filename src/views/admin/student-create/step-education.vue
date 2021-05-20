@@ -57,6 +57,26 @@
               }}</span>
             </div>
           </VeeField>
+          <VeeField v-slot="{ field, errorMessage }" name="campus">
+            <div class="p-field">
+              <label class="form-required-mark">Campus</label>
+              <PrimeDropdown
+                :class="{ 'p-invalid': errorMessage }"
+                filter
+                show-clear
+                :options="campusSelector.options"
+                option-label="name"
+                option-value="code"
+                :model-value="field.value"
+                @filter="campusSelector.filter"
+                @input="field.onInput.forEach((fn) => fn($event.value))"
+                @change="field.onChange.forEach((fn) => fn($event.value))"
+              />
+              <span v-if="errorMessage" class="p-error">{{
+                errorMessage
+              }}</span>
+            </div>
+          </VeeField>
         </div>
       </template>
       <template #footer>
@@ -132,13 +152,21 @@ export default defineComponent({
       emit('prevStep', { stepIndex })
     }
 
+    const campusSelector = {
+      options: [],
+      filter() {
+        // ...
+      }
+    }
+
     return {
       periodOptions,
       gradeOptions,
       validationSchema,
       onSubmit,
       handlePrevious,
-      GRADES_OF_PERIOD
+      GRADES_OF_PERIOD,
+      campusSelector
     }
   }
 })

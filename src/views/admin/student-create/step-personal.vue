@@ -38,23 +38,6 @@
               }}</span>
             </div>
           </VeeField>
-          <VeeField v-slot="{ field, errorMessage }" name="gender">
-            <div class="p-field">
-              <label class="form-required-mark">Gender</label>
-              <PrimeDropdown
-                :class="{ 'p-invalid': errorMessage }"
-                :options="genderOptions"
-                option-label="name"
-                option-value="code"
-                :model-value="field.value"
-                @input="field.onInput.forEach((fn) => fn($event.value))"
-                @change="field.onChange.forEach((fn) => fn($event.value))"
-              />
-              <span v-if="errorMessage" class="p-error">{{
-                errorMessage
-              }}</span>
-            </div>
-          </VeeField>
         </div>
       </template>
       <template #footer>
