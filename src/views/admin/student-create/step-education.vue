@@ -153,6 +153,7 @@ export default defineComponent({
     }
 
     const campusSelector = {
+      loading: true,
       options: [],
       filter() {
         // ...
