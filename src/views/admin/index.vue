@@ -2,7 +2,17 @@
   <div class="min-h-screen">
     <header
       :class="$style.primeBorder"
-      class="border-b flex flex-row h-20 ml-72 px-6 justify-between items-center -sm:px-4 -lg:ml-0"
+      class="
+        border-b
+        flex flex-row
+        h-20
+        ml-72
+        px-6
+        justify-between
+        items-center
+        -sm:px-4
+        -lg:ml-0
+      "
     >
       <PrimeButton
         icon="pi pi-bars"
@@ -40,7 +50,17 @@
           '-lg:(transform -translate-x-full)': !sidebarActive
         }
       ]"
-      class="flex flex-col h-full border-r-1 inset-0 transition-transform w-72 z-20 fixed select-none"
+      class="
+        flex flex-col
+        h-full
+        border-r-1
+        inset-0
+        transition-transform
+        w-72
+        z-20
+        fixed
+        select-none
+      "
     >
       <router-link
         :class="$style.primeBorder"

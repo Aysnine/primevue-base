@@ -35,7 +35,7 @@ const routes = [
             path: 'confirmation',
             component: () =>
               import('../views/admin/student-create/step-confirmation.vue')
-          },
+          }
         ]
       },
       {

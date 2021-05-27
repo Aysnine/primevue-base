@@ -49,7 +49,16 @@
         >
           <template #empty>
             <div
-              class="border-transparent flex flex-col space-y-4 border-b-2 min-h-134 box-content items-center justify-center"
+              class="
+                border-transparent
+                flex flex-col
+                space-y-4
+                border-b-2
+                min-h-134
+                box-content
+                items-center
+                justify-center
+              "
             >
               <template v-if="fetch.error.value">
                 <div class="max-w-sm text-red-500 truncate">
