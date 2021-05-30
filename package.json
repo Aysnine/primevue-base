@@ -20,6 +20,7 @@
     "@vee-validate/zod": "^4.1.20",
     "@vueuse/core": "^4.11.1",
     "axios": "^0.21.1",
+    "inflected": "^2.1.0",
     "miragejs": "^0.1.41",
     "primeflex": "^2.0.0",
     "primeicons": "^4.1.0",
@@ -32,6 +33,7 @@
   "devDependencies": {
     "@commitlint/cli": "^12.1.4",
     "@commitlint/config-conventional": "^12.1.4",
+    "@types/inflected": "^1.1.29",
     "@types/node": "^15.6.1",
     "@typescript-eslint/eslint-plugin": "^4.25.0",
     "@typescript-eslint/parser": "^4.25.0",

@@ -6,28 +6,44 @@ import {
   Response,
   Serializer
 } from 'miragejs'
+import { inflections } from 'inflected'
 import { Gender } from '../api'
+
+inflections('en', (inflect: any) => {
+  inflect.irregular('campus', 'campuses')
+})
 
 export const makeServer = ({ environment = 'development' } = {}) => {
   const server = createServer({
     environment,
 
     models: {
+      campus: Model,
       student: Model.extend({
-        adminTeacher: belongsTo('teacher', { polymorphic: true })
+        adminTeacher: belongsTo('teacher', { polymorphic: true }),
+        baseCampus: belongsTo('campus', { polymorphic: true })
       }),
-      teacher: Model
+      teacher: Model.extend({
+        baseCampus: belongsTo('campus', { polymorphic: true })
+      })
     },
 
     serializers: {
       application: Serializer,
+      teacher: Serializer.extend({
+        include: ['campus'],
+        embed: true
+      }),
       student: Serializer.extend({
-        include: ['adminTeacher'],
+        include: ['adminTeacher', 'campus'],
         embed: true
       })
     },
 
     factories: {
+      campus: Factory.extend({
+        name: (i: number) => 'Campus ' + i
+      }),
       student: Factory.extend({
         name: (i: number) => 'Student ' + i,
         gender: Gender.MALE,
@@ -39,8 +55,15 @@ export const makeServer = ({ environment = 'development' } = {}) => {
     },
 
     seeds(server) {
-      server.createList('teacher', 5).forEach((teacher) => {
-        server.createList('student', 5, { adminTeacher: teacher })
+      server.createList('campus', 5).forEach((campus) => {
+        server
+          .createList('teacher', 5, { baseCampus: campus })
+          .forEach((teacher) => {
+            server.createList('student', 5, {
+              baseCampus: campus,
+              adminTeacher: teacher
+            })
+          })
       })
     },
 
@@ -63,6 +86,13 @@ export const makeServer = ({ environment = 'development' } = {}) => {
         return {
           total: 100,
           data: schema.db.teachers
+        }
+      })
+
+      this.get('/campuses', function (schema) {
+        return {
+          total: 100,
+          data: schema.db.campuses
         }
       })
 

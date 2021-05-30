@@ -60,10 +60,20 @@ export const getStudents = <
 >(
   params: Pagination
 ): Promise<Response> => http.get<void, Response>('/students', { params })
+
 /* Teachers */
 export const getTeachers = <
-  Response extends Pageable<{ id: string }>
->(): Promise<Response> => http.get<void, Response>('/teachers')
+  Response extends Pageable<{ id: string; name: string }>
+>(
+  params: Pagination & { name?: string }
+): Promise<Response> => http.get<void, Response>('/teachers', { params })
+
+/* Campus */
+export const getCampuses = <
+  Response extends Pageable<{ id: string; name: string }>
+>(
+  params: Pagination & { name?: string }
+): Promise<Response> => http.get<void, Response>('/campuses', { params })
 
 export default http
 export * from './errors'

@@ -1,82 +1,69 @@
 <template>
   <VeeForm
-    v-slot="{ setFieldValue, values }"
+    v-slot="{ values }"
     autocomplete="off"
     :validation-schema="validationSchema"
-    @submit="onSubmit"
+    @submit="handleNext"
   >
     <PrimeCard>
       <template #subtitle>Education Information</template>
       <template #content>
         <div class="m-auto p-fluid max-w-100">
-          <VeeField v-slot="{ field, errorMessage }" name="period">
-            <div class="p-field">
-              <label class="form-required-mark">Period</label>
-              <PrimeDropdown
-                :class="{ 'p-invalid': errorMessage }"
-                :options="periodOptions"
-                option-label="name"
-                option-value="code"
-                :model-value="field.value"
-                @input="
-                  field.onInput.forEach((fn) => fn($event.value)),
-                    setFieldValue('grade', '')
-                "
-                @change="
-                  field.onChange.forEach((fn) => fn($event.value)),
-                    setFieldValue('grade', '')
-                "
-              />
-              <span v-if="errorMessage" class="p-error">{{
-                errorMessage
-              }}</span>
-            </div>
-          </VeeField>
-          <VeeField
-            v-if="values.period"
-            v-slot="{ field, errorMessage }"
-            name="grade"
-          >
-            <div class="p-field">
-              <label class="form-required-mark">Grade</label>
-              <PrimeDropdown
-                :class="{ 'p-invalid': errorMessage }"
-                :options="
-                  gradeOptions.filter((i) =>
-                    GRADES_OF_PERIOD[values.period].includes(i.code)
-                  )
-                "
-                option-label="name"
-                option-value="code"
-                :model-value="field.value"
-                @input="field.onInput.forEach((fn) => fn($event.value))"
-                @change="field.onChange.forEach((fn) => fn($event.value))"
-              />
-              <span v-if="errorMessage" class="p-error">{{
-                errorMessage
-              }}</span>
-            </div>
-          </VeeField>
           <VeeField v-slot="{ field, errorMessage }" name="campus">
             <div class="p-field">
               <label class="form-required-mark">Campus</label>
               <PrimeDropdown
-                :class="{ 'p-invalid': errorMessage }"
                 filter
-                show-clear
-                :options="campusSelector.options"
+                :class="{ 'p-invalid': errorMessage }"
+                :options="
+                  asyncCampusOptions.error.value
+                    ? []
+                    : asyncCampusOptions.data.value.data
+                "
                 option-label="name"
-                option-value="code"
+                :loading="asyncCampusOptions.pending.value"
                 :model-value="field.value"
-                @filter="campusSelector.filter"
-                @input="field.onInput.forEach((fn) => fn($event.value))"
                 @change="field.onChange.forEach((fn) => fn($event.value))"
+                @filter="searchCampus($event.value)"
               />
               <span v-if="errorMessage" class="p-error">{{
                 errorMessage
               }}</span>
             </div>
           </VeeField>
+
+          <VeeField v-slot="{ field, errorMessage }" name="adminTeacher">
+            <div class="p-field">
+              <label class="form-required-mark">Admin Teacher</label>
+              <PrimeDropdown
+                filter
+                :class="{ 'p-invalid': errorMessage }"
+                :options="
+                  asyncTeacherOptions.error.value
+                    ? []
+                    : asyncTeacherOptions.data.value.data
+                "
+                option-label="name"
+                :loading="asyncTeacherOptions.pending.value"
+                :model-value="field.value"
+                @change="field.onChange.forEach((fn) => fn($event.value))"
+                @filter="searchTeacher($event.value)"
+              />
+              <span v-if="errorMessage" class="p-error">{{
+                errorMessage
+              }}</span>
+            </div>
+          </VeeField>
+
+          <PrimeMessage
+            v-if="
+              values.campus &&
+              values.adminTeacher &&
+              values.adminTeacher.campus.id !== values.campus.id
+            "
+            severity="warn"
+            >Warning PrimeMessage Content</PrimeMessage
+          >
         </div>
       </template>
       <template #footer>
@@ -101,28 +88,24 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref } from 'vue'
+import { defineComponent } from 'vue'
 import PrimeCard from 'primevue/card'
 import PrimeButton from 'primevue/button'
+import PrimeMessage from 'primevue/message'
 import PrimeDropdown from 'primevue/dropdown'
-import { GRADES_OF_PERIOD, GRADE_TEXT, PERIOD_TEXT } from '../../../constants'
 import { Form as VeeForm, Field as VeeField } from 'vee-validate'
 import { toFormValidator } from '@vee-validate/zod'
 import * as zod from 'zod'
+import { getCampuses, getTeachers, useAsyncApi } from '../../../api'
+import { useThrottleFn } from '@vueuse/shared'
 
 const stepIndex = 1
-
-// campusId
-// gender
-// grade
-// name
-// period
-// teacherId
 
 export default defineComponent({
   components: {
     PrimeCard,
     PrimeButton,
+    PrimeMessage,
     PrimeDropdown,
     VeeForm,
     VeeField
@@ -131,43 +114,49 @@ export default defineComponent({
   setup(_, { emit }) {
     const validationSchema = toFormValidator(
       zod.object({
-        period: zod.string().nonempty('This is required'),
-        grade: zod.string().nonempty('This is required')
+        campus: zod.object({ id: zod.string(), name: zod.string() }).required(),
+        adminTeacher: zod
+          .object({ id: zod.string(), name: zod.string() })
+          .required()
       })
     )
 
-    const onSubmit = (values: any) => {
+    const handleNext = (values: any) => {
       emit('nextStep', { stepIndex, formValues: { ...values } })
     }
 
-    const periodOptions = ref(
-      Object.entries(PERIOD_TEXT).map(([code, name]) => ({ code, name }))
+    const asyncCampusOptions = useAsyncApi(
+      (keywords) =>
+        getCampuses({ pageIndex: 0, pageSize: 10, name: keywords as string }),
+      { data: [], total: 0 }
     )
 
-    const gradeOptions = ref(
-      Object.entries(GRADE_TEXT).map(([code, name]) => ({ code, name }))
+    const searchCampus = useThrottleFn((keywords: string) => {
+      asyncCampusOptions.execute(keywords)
+    }, 500)
+
+    const asyncTeacherOptions = useAsyncApi(
+      (keywords) =>
+        getTeachers({ pageIndex: 0, pageSize: 10, name: keywords as string }),
+      { data: [], total: 0 }
     )
+
+    const searchTeacher = useThrottleFn((keywords: string) => {
+      asyncTeacherOptions.execute(keywords)
+    }, 500)
 
     const handlePrevious = () => {
       emit('prevStep', { stepIndex })
     }
 
-    const campusSelector = {
-      loading: true,
-      options: [],
-      filter() {
-        // ...
-      }
-    }
-
     return {
-      periodOptions,
-      gradeOptions,
       validationSchema,
-      onSubmit,
-      handlePrevious,
-      GRADES_OF_PERIOD,
-      campusSelector
+      asyncCampusOptions,
+      searchCampus,
+      asyncTeacherOptions,
+      searchTeacher,
+      handleNext,
+      handlePrevious
     }
   }
 })
